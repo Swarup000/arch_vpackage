@@ -55,4 +55,38 @@ echo "[6d] Setting root password..."
 echo "root:root" | chpasswd   # replace 'root' with your desired password
 
 echo "[6e] Enable NetworkManager..."
-systemctl enable NetworkMan
+systemctl enable NetworkManager
+
+echo "[6f] Install systemd-boot..."
+bootctl install
+
+echo "[6g] Create boot entry..."
+ROOT_UUID=$(blkid -s UUID -o value /dev/nvme0n1p2)
+cat <<BOOTCONF > /boot/loader/entries/arch.conf
+title   Arch Linux
+linux   /vmlinuz-linux
+initrd  /initramfs-linux.img
+options root=UUID=$ROOT_UUID rw
+BOOTCONF
+
+cat <<LOADERCONF > /boot/loader/loader.conf
+default arch
+timeout 3
+editor 0
+LOADERCONF
+
+echo "[6h] Random seed location (safe for FAT32 /boot)..."
+mkdir -p /etc/systemd/system/systemd-random-seed.service.d
+cat <<SEEDCONF > /etc/systemd/system/systemd-random-seed.service.d/override.conf
+[Service]
+RandomSeed=/var/lib/systemd/random-seed
+SEEDCONF
+
+EOF
+
+# --- 7. Unmount and finish ---
+echo "[7/10] Unmounting and finishing..."
+umount -R /mnt
+sync
+
+echo "=== Install complete! You can now remove the USB and reboot. ==="
