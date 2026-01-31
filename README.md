@@ -1,58 +1,72 @@
-# Arch Linux Automated Install Script
+# Arch Linux Automated Install & Pentesting Setup
 
-This script automates the installation of a minimal Arch Linux system on a UEFI machine with an NVMe drive. It is **future-proof**, handles mirrors, keyrings, and bootloader configuration, and is designed for unattended installs.
+This repository contains **two scripts**:
+1. A **base Arch Linux installation script**
+2. A **post‑install pentesting environment setup script**
 
----
-
-## Features
-
-1. **Partition Mounting**  
-   - Mounts the root and EFI partitions automatically.
-
-2. **Mirror Update**  
-   - Refreshes package mirrors with fast, India-based HTTPS mirrors.  
-   - Updates the package database.
-
-3. **Keyring Initialization**  
-   - Sets up and populates Arch Linux GPG keys.  
-   - Updates the keyring to avoid “unknown trust” errors.
-
-4. **Base System Installation**  
-   - Installs a minimal Arch system (`base`, `linux`, `linux-firmware`, `networkmanager`, `vim`).  
-   - Uses `--noconfirm` for unattended installation.
-
-5. **Filesystem Table**  
-   - Generates `/etc/fstab` using UUIDs for reliable mounting.
-
-6. **System Configuration (Chroot)**  
-   - Timezone and hardware clock setup.  
-   - Locale configuration (`en_US.UTF-8`).  
-   - Hostname and `/etc/hosts` setup.  
-   - Root password assignment.  
-   - Enables NetworkManager for networking.
-
-7. **Bootloader Setup (Full Script)**  
-   - Installs `systemd-boot` for UEFI booting.  
-   - Creates boot entries pointing to the installed kernel and root partition.  
-   - Sets default loader entry and timeout.  
-   - Secures random seed storage to avoid world-readable `/boot` warnings.
-
-8. **Cleanup and Reboot**  
-   - Exits chroot, unmounts partitions, and reboots into the new system.
+Together, they automate a full Arch Linux installation and convert it into a
+ready‑to‑use **cybersecurity / pentesting workstation**.
 
 ---
 
-## Usage
+## Script Overview
 
-1. Boot from the Arch Linux live ISO.  
-2. Connect to the internet (Wi-Fi or Ethernet).  
-3. Run the script in the live environment.  
-4. After the script completes, remove the USB and reboot.
+### 1. Arch Installation Script
+- Mounts EFI and root partitions
+- Updates mirrors and package keyrings
+- Installs a minimal Arch Linux system
+- Configures:
+  - Timezone and locale
+  - Hostname and root password
+  - NetworkManager
+- Generates `fstab`
+- Installs and configures `systemd-boot`
+- Fixes random‑seed security warning
+- Prepares the system for first boot
+
+**Run from:** Arch Linux live ISO  
+**Result:** Bootable Arch Linux system
+
+---
+
+### 2. Post‑Install Pentesting Setup Script
+- Updates the system
+- Enables `multilib`
+- Installs development tools and language runtimes
+- Adds:
+  - BlackArch repository
+  - Chaotic‑AUR repository
+- Installs common pentesting tools and frameworks
+- Updates tool databases (Exploit‑DB, Nmap, SQLMap)
+- Sets up Metasploit and PostgreSQL
+- Creates a structured pentesting workspace
+
+**Run from:** Installed Arch system (as a sudo user)  
+**Result:** Fully configured pentesting environment
+
+---
+
+## Usage Order
+
+1. Boot Arch Linux live ISO  
+2. Run the **installation script**  
+3. Reboot into the new system  
+4. Log in as a normal user  
+5. Run the **post‑install setup script**  
+6. Reboot (recommended)
 
 ---
 
 ## Notes
 
-- The script is **idempotent** — it can be safely re-run to fix failed installs.  
-- Designed for **UEFI + NVMe** systems. Adjust partitions if different.  
-- Locale, timezone, hostname, and root password can be customized in the script.
+- Designed for **UEFI systems with NVMe storage**
+- Uses `--noconfirm` for unattended execution
+- Intended for **dedicated pentesting systems**
+- Uses third‑party repositories (BlackArch, Chaotic‑AUR)
+
+---
+
+## Disclaimer
+
+Use only on systems intended for security testing.
+Mixing multiple repositories may reduce long‑term system stability.
